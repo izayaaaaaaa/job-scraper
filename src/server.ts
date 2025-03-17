@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { PuppeteerService } from './core/puppeteer-service';
-import { getAppLogger, logError } from './core/logger';
-import { PuppeteerError, ValidationError } from './core/errors';
+import { getAppLogger, logError } from './utils/logger';
+import { PuppeteerError, ValidationError } from './utils/errors';
 import { RedditController } from './controllers/reddit-controller';
 
 // Get the application logger
@@ -82,20 +82,3 @@ app.listen(port, async () => {
 
 // Add routes for Reddit job listings
 app.get('/api/jobs', (req, res) => redditController.getJobListings(req, res));
-
-// Handle graceful shutdown - simplified
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  
-  // Close puppeteer service (which handles all browser instances)
-  await puppeteerService.cleanup();
-  
-  process.exit(0);
-});
-
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-  logger.info('Shutting down scraper service...');
-  await puppeteerService.cleanup();
-  process.exit(0);
-}); 

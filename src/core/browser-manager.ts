@@ -1,8 +1,8 @@
 import puppeteer from 'puppeteer-extra';
 import * as puppeteerType from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { getLogger } from './logger';
-import { BrowserError, toPuppeteerError } from './errors';
+import { getLogger } from '../utils/logger';
+import { BrowserError, toPuppeteerError } from '../utils/errors';
 
 // Register the stealth plugin
 puppeteer.use(StealthPlugin());

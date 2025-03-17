@@ -2,31 +2,55 @@ import { createStream } from 'rotating-file-stream';
 import { Logger, ILogObj, ISettingsParam, ILogObjMeta } from 'tslog';
 import * as path from 'path';
 
-// Configure log directory and ensure it exists
+/**
+ * Configure log directory and ensure it exists
+ */
 const logDir = path.join(process.cwd(), 'logs');
 const fs = require('fs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-// Default logger settings
+/**
+ * Default logger settings
+ */
 const defaultSettings: ISettingsParam<ILogObj> = {
   name: "app",
   minLevel: 2, // info in prod, debug in dev
   hideLogPositionForProduction: true,
 };
 
-// Create the application-level logger
+/**
+ * Create the application-level logger
+ */
 const appLogger = new Logger<ILogObj>(defaultSettings);
 
-// Set up file rotation for logs
-const fileStream = createStream(path.join(logDir, 'app.log'), {
+/**
+ * Set up file rotation for logs
+ */
+const fileStream = createStream((time, index) => {
+  // Use current time if time is not provided (for initial file)
+  const now = time ? new Date(time) : new Date();
+  
+  // Format: app-YYYYMMDD-HHmmss-[index].log
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  const second = String(now.getSeconds()).padStart(2, '0');
+  
+  const filename = `app-${year}${month}${day}-${hour}${minute}${second}${index ? `-${index}` : ''}.log`;
+  return path.join(logDir, filename);
+}, {
   size: '10M',        // Rotate after 10 megabytes
   interval: '7d',     // Rotate after 7 days
   compress: 'gzip',   // Compress rotated files
 });
 
-// Attach file transport with proper type
+/**
+ * Attach file transport with proper type
+ */
 appLogger.attachTransport((logObj: ILogObj & ILogObjMeta) => {
   fileStream.write(JSON.stringify(logObj) + '\n');
 });

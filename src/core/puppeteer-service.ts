@@ -1,8 +1,8 @@
 import { Page } from 'puppeteer';
 import { BrowserManager } from './browser-manager';
 import { PuppeteerTask, PuppeteerTaskResult } from '../types/puppeteer-types';
-import { getLogger, logError } from './logger';
-import { NavigationError, toPuppeteerError } from './errors';
+import { getLogger, logError } from '../utils/logger';
+import { NavigationError, toPuppeteerError } from '../utils/errors';
 
 // Get a component-specific logger
 const logger = getLogger('puppeteer');

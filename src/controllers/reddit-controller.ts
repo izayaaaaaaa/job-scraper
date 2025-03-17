@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { getLogger } from '../core/logger';
+import { getLogger } from '../utils/logger';
 import { PuppeteerService } from '../core/puppeteer-service';
 import { ParsedJobListing } from '../types/reddit-types';
-import { scrapeRedditJobListings, parseJobDetails } from '../services/reddit-tasks';
-import { PuppeteerError, ValidationError } from '../core/errors';
+import { scrapeRedditJobListings, parseJobDetails } from '../services/reddit-service';
+import { PuppeteerError, ValidationError } from '../utils/errors';
 
 const logger = getLogger('reddit-controller');
 
@@ -16,7 +16,7 @@ export class RedditController {
   
   async getJobListings(req: Request, res: Response): Promise<void> {
     try {
-      const url = 'https://www.reddit.com/r/PinoyProgrammer/comments/1j0m8iv/who_is_hiring_march_2025/';
+      const url = 'https://www.reddit.com/r/PinoyProgrammer/comments/1j0m8iv/who_is_hiring_march_2025/?sort=new';
       
       // Generate a unique task ID for this request
       const taskId = `reddit-task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

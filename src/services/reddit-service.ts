@@ -1,8 +1,8 @@
 import { Page } from 'puppeteer';
 import { PuppeteerTask } from '../types/puppeteer-types';
 import { JobListing } from '../types/reddit-types';
-import { getLogger } from '../core/logger';
-import { ScrapingError } from '../core/errors';
+import { getLogger } from '../utils/logger';
+import { ScrapingError } from '../utils/errors';
 import fs from 'fs';
 
 // Get a component-specific logger
@@ -131,11 +131,7 @@ export const scrapeRedditJobListings: PuppeteerTask<RedditScrapingResult> = asyn
     }
 
     logger.info('Finished scrolling, extracting data');
-    
-    // Extract the HTML for debugging (outside of evaluate)
-    const commentsHtml = await page.content();
-    fs.writeFileSync('page-content.html', commentsHtml);
-    
+  
     // Extract job listings with the new structure
     const jobListings = await page.evaluate(() => {
       const listings: JobListing[] = [];
